@@ -1,0 +1,63 @@
+{
+    "name": "DS_ADL2_Parquet",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LS_ADL2",
+            "type": "LinkedServiceReference",
+            "parameters": {
+                "STR_SecretName": {
+                    "value": "@dataset().STR_ADL2SecretName",
+                    "type": "Expression"
+                },
+                "STR_URL": {
+                    "value": "@dataset().STR_ADL2URL",
+                    "type": "Expression"
+                }
+            }
+        },
+        "parameters": {
+            "STR_Container": {
+                "type": "string"
+            },
+            "STR_Directory": {
+                "type": "string"
+            },
+            "STR_Filename": {
+                "type": "string"
+            },
+            "STR_Compression": {
+                "type": "string"
+            },
+            "STR_ADL2SecretName": {
+                "type": "string"
+            },
+            "STR_ADL2URL": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "Parquet",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": {
+                    "value": "@dataset().STR_Filename",
+                    "type": "Expression"
+                },
+                "folderPath": {
+                    "value": "@dataset().STR_Directory",
+                    "type": "Expression"
+                },
+                "fileSystem": {
+                    "value": "@dataset().STR_Container",
+                    "type": "Expression"
+                }
+            },
+            "compressionCodec": {
+                "value": "@dataset().STR_Compression",
+                "type": "Expression"
+            }
+        },
+        "schema": []
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "name": "LS_KV_ConnectionStrings",
+    "properties": {
+        "parameters": {
+            "STR_KVURL": {
+                "type": "string",
+                "defaultValue": "https://kvcerneradf2.vault.azure.net/"
+            }
+        },
+        "annotations": [],
+        "type": "AzureKeyVault",
+        "typeProperties": {
+            "baseUrl": "@{linkedService().STR_KVURL}"
+        }
+    }
+}

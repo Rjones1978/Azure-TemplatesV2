@@ -1,0 +1,25 @@
+{
+    "name": "LS_SQL",
+    "properties": {
+        "parameters": {
+            "STR_KVSecret": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "SqlServer",
+        "typeProperties": {
+            "connectionString": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "LS_KV_ConnectionStrings",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": {
+                    "value": "@linkedService().STR_KVSecret",
+                    "type": "Expression"
+                }
+            }
+        }
+    }
+}

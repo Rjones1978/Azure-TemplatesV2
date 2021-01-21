@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfCerner5"
+		},
+		"LS_ADL2_properties_typeProperties_url": {
+			"value": "@linkedService().STR_URL"
+		},
+		"LS_BLOB_properties_typeProperties_connectionString_secretName": {
+			"value": "@linkedService().STR_SECRETNAME"
+		},
+		"LS_KV_ConnectionStrings_properties_typeProperties_baseUrl": {
+			"value": "@{linkedService().STR_KVURL}"
+		},
+		"LS_SQL_properties_typeProperties_connectionString_secretName": {
+			"value": "@linkedService().STR_KVSecret"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "value": "adfCerner7"
+        },
+        "version": {
+            "value": "V2"
+        },
+        "location": {
+            "value": "southcentralus"
+        },
+        "vNetEnabled": {
+            "value": false
+        },
+        "publicNetworkAccess": {
+            "value": true
+        },
+        "gitConfigureLater": {
+            "value": false
+        },
+        "gitRepoType": {
+            "value": "FactoryGitHubConfiguration"
+        },
+        "gitAccountName": {
+            "value": "rjones1978"
+        },
+        "gitRepositoryName": {
+            "value": "Azure-TemplatesV2"
+        },
+        "gitCollaborationBranch": {
+            "value": "main"
+        },
+        "gitRootFolder": {
+            "value": "/AzureDataFactoryV2"
+        },
+        "tagsByResource": {
+            "value": {}
+        },
+        "userAssignedIdentitiesStr": {
+            "value": "{\"type\": \"UserAssigned\", \"userAssignedIdentities\": {\"\": {}}}"
+        },
+        "enableCMK": {
+            "value": false
+        }
+    }
+}

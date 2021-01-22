@@ -31,11 +31,11 @@
             "type": "bool"
         },
         "gitConfigureLater": {
-            "defaultValue": true,
+            "defaultValue": false,
             "type": "bool"
         },
         "gitRepoType": {
-            "defaultValue": "FactoryVSTSConfiguration",
+            "defaultValue": "FactoryGitHubConfiguration",
             "type": "string"
         },
         "gitAccountName": {

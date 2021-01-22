@@ -3,7 +3,6 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "name": {
-            "defaultValue": "myv2datafactory",
             "type": "string"
         },
         "version": {

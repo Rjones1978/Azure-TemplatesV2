@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "name": {
+        "ADFname": {
             "type": "string"
         },
         "version": {
@@ -92,7 +92,7 @@
             "condition": "[equals(parameters('version'), 'V2')]",
             "type": "Microsoft.DataFactory/factories",
             "apiVersion": "2018-06-01",
-            "name": "[parameters('name')]",
+            "name": "[parameters('ADFname')]",
             "location": "[parameters('location')]",
             "identity": "[if(parameters('enableCMK'),json(parameters('userAssignedIdentitiesStr')), parameters('userAssignedIdentities'))]",
             "properties": {
@@ -104,17 +104,17 @@
             "resources": [
                 {
                     "condition": "[and(equals(parameters('version'), 'V2'), parameters('vNetEnabled'))]",
-                    "name": "[concat(parameters('name'), '/default')]",
+                    "name": "[concat(parameters('ADFname'), '/default')]",
                     "type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
                     "apiVersion": "2018-06-01",
                     "properties": {},
                     "dependsOn": [
-                        "[concat('Microsoft.DataFactory/factories/', parameters('name'))]"
+                        "[concat('Microsoft.DataFactory/factories/', parameters('ADFname'))]"
                     ]
                 },
                 {
                     "condition": "[and(equals(parameters('version'), 'V2'), parameters('vNetEnabled'))]",
-                    "name": "[concat(parameters('name'), '/AutoResolveIntegrationRuntime')]",
+                    "name": "[concat(parameters('ADFname'), '/AutoResolveIntegrationRuntime')]",
                     "type": "Microsoft.DataFactory/factories/integrationRuntimes",
                     "apiVersion": "2018-06-01",
                     "properties": {
@@ -130,8 +130,8 @@
                         }
                     },
                     "dependsOn": [
-                        "[concat('Microsoft.DataFactory/factories/', parameters('name'))]",
-                        "[concat('Microsoft.DataFactory/factories/', parameters('name'), '/managedVirtualNetworks/default')]"
+                        "[concat('Microsoft.DataFactory/factories/', parameters('ADFname'))]",
+                        "[concat('Microsoft.DataFactory/factories/', parameters('ADFname'), '/managedVirtualNetworks/default')]"
                     ]
                 }
             ]
@@ -139,7 +139,7 @@
         {
             "condition": "[equals(parameters('version'), 'V1')]",
             "apiVersion": "2015-01-01-preview",
-            "name": "[parameters('name')]",
+            "name": "[parameters('ADFname')]",
             "location": "[if(equals(parameters('version'), 'V1'), parameters('location'), 'eastus')]",
             "type": "Microsoft.DataFactory/dataFactories",
             "properties": {},

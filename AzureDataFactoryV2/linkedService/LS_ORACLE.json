@@ -1,0 +1,25 @@
+{
+	"name": "LS_ORACLE",
+	"properties": {
+		"parameters": {
+			"STR_ORACLESECRET": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Oracle",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_KV_ConnectionStrings",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": {
+					"value": "@linkedService().STR_ORACLESECRET",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}

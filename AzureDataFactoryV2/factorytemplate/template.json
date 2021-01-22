@@ -10,7 +10,7 @@
             "type": "string"
         },
         "location": {
-            "defaultValue": "eastus",
+            "defaultValue": "southcentralus",
             "type": "string"
         },
         "apiVersion": {
@@ -18,7 +18,9 @@
             "type": "string"
         },
         "tagsByResource": {
-            "type": "Object"
+            "type": "Object",
+            "defaultValue":{
+            }
         },
         "vNetEnabled": {
             "defaultValue": false,
@@ -37,7 +39,7 @@
             "type": "string"
         },
         "gitAccountName": {
-            "defaultValue": "",
+            "defaultValue": "rjones1978",
             "type": "string"
         },
         "gitProjectName": {
@@ -45,15 +47,15 @@
             "type": "string"
         },
         "gitRepositoryName": {
-            "defaultValue": "",
+            "defaultValue": "Azure-TemplatesV2",
             "type": "string"
         },
         "gitCollaborationBranch": {
-            "defaultValue": "master",
+            "defaultValue": "main",
             "type": "string"
         },
         "gitRootFolder": {
-            "defaultValue": "/",
+            "defaultValue": "/AzureDataFactoryV2",
             "type": "string"
         },
         "userAssignedIdentities": {

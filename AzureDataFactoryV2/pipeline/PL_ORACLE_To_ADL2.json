@@ -1,0 +1,156 @@
+{
+	"name": "PL_ORACLE_To_ADL2",
+	"properties": {
+		"activities": [
+			{
+				"name": "LU_Pipeline_Workflow",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_BLOB_JSON",
+						"type": "DatasetReference",
+						"parameters": {
+							"STR_BlobSecret": "SEC-CernerConfigFile",
+							"STR_BlobContainer": "pipelineparams",
+							"STR_BlobDirectory": "dataset1",
+							"STR_BlobFileName": "pipe_sql_adl2.json"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FE_ExecuteWorkflow",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LU_Pipeline_Workflow",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LU_Pipeline_Workflow').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "CO_LOAD",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "OracleSource",
+									"partitionOption": "None",
+									"queryTimeout": "02:00:00"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_ORACLE",
+									"type": "DatasetReference",
+									"parameters": {
+										"STR_OracleSecretName": {
+											"value": "@item().ORACLESECRET_NAME",
+											"type": "Expression"
+										},
+										"STR_TABLESCHEMA": {
+											"value": "@item().ORACLESOURCE_SCHEMA_NAME",
+											"type": "Expression"
+										},
+										"STR_TABLENAME": {
+											"value": "@item().ORACLESOURCE_TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_ADL2_Parquet",
+									"type": "DatasetReference",
+									"parameters": {
+										"STR_Container": {
+											"value": "@item().ADL2TARGET_CONTAINER",
+											"type": "Expression"
+										},
+										"STR_Directory": {
+											"value": "@item().ADL2TARGET_DIRECTORY",
+											"type": "Expression"
+										},
+										"STR_Filename": {
+											"value": "@concat(item().ADL2_FILE_PREFIX,'_',utcnow('yyyyMMdd'),'_000000.parquet')",
+											"type": "Expression"
+										},
+										"STR_Compression": {
+											"value": "@item().ADL2Compression",
+											"type": "Expression"
+										},
+										"STR_ADL2SecretName": {
+											"value": "@item().ADL2SECRETNAME",
+											"type": "Expression"
+										},
+										"STR_ADL2URL": {
+											"value": "@item().ADL2URL",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": []
+	}
+}

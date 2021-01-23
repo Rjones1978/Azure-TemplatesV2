@@ -1,0 +1,39 @@
+{
+	"name": "DS_SQL1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQL",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"STR_KVSecret": {
+					"value": "@dataset().STR_SQLSecretName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"STR_TABLESCHEMA": {
+				"type": "string"
+			},
+			"STR_TABLENAME": {
+				"type": "string"
+			},
+			"STR_SQLSecretName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().STR_TABLESCHEMA",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().STR_TABLENAME",
+				"type": "Expression"
+			}
+		}
+	}
+}

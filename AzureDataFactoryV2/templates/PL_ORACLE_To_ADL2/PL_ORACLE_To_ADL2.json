@@ -1,0 +1,347 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name"
+		},
+		"LS_BLOB": {
+			"type": "string"
+		},
+		"LS_ORACLE": {
+			"type": "string"
+		},
+		"LS_ADL2": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_ORACLE_To_ADL2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LU_Pipeline_Workflow",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "DS_BLOB_JSON",
+								"type": "DatasetReference",
+								"parameters": {
+									"STR_BlobSecret": "SEC-CernerConfigFile",
+									"STR_BlobContainer": "pipelineparams",
+									"STR_BlobDirectory": "dataset1",
+									"STR_BlobFileName": "pipe_sql_adl2.json"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE_ExecuteWorkflow",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LU_Pipeline_Workflow",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LU_Pipeline_Workflow').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "CO_LOAD",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "OracleSource",
+											"partitionOption": "None",
+											"queryTimeout": "02:00:00"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_ORACLE",
+											"type": "DatasetReference",
+											"parameters": {
+												"STR_OracleSecretName": {
+													"value": "@item().ORACLESECRET_NAME",
+													"type": "Expression"
+												},
+												"STR_TABLESCHEMA": {
+													"value": "@item().ORACLESOURCE_SCHEMA_NAME",
+													"type": "Expression"
+												},
+												"STR_TABLENAME": {
+													"value": "@item().ORACLESOURCE_TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_ADL2_Parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"STR_Container": {
+													"value": "@item().ADL2TARGET_CONTAINER",
+													"type": "Expression"
+												},
+												"STR_Directory": {
+													"value": "@item().ADL2TARGET_DIRECTORY",
+													"type": "Expression"
+												},
+												"STR_Filename": {
+													"value": "@concat(item().ADL2_FILE_PREFIX,'_',utcnow('yyyyMMdd'),'_000000.parquet')",
+													"type": "Expression"
+												},
+												"STR_Compression": {
+													"value": "@item().ADL2Compression",
+													"type": "Expression"
+												},
+												"STR_ADL2SecretName": {
+													"value": "@item().ADL2SECRETNAME",
+													"type": "Expression"
+												},
+												"STR_ADL2URL": {
+													"value": "@item().ADL2URL",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_BLOB_JSON')]",
+				"[concat(variables('factoryId'), '/datasets/DS_ORACLE')]",
+				"[concat(variables('factoryId'), '/datasets/DS_ADL2_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_JSON')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('LS_BLOB')]",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"STR_SECRETNAME": {
+							"value": "@dataset().STR_BlobSecret",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"STR_BlobSecret": {
+						"type": "string"
+					},
+					"STR_BlobContainer": {
+						"type": "string"
+					},
+					"STR_BlobDirectory": {
+						"type": "string"
+					},
+					"STR_BlobFileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().STR_BlobFileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().STR_BlobDirectory",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "@dataset().STR_BlobContainer",
+							"type": "Expression"
+						}
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_ORACLE')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('LS_ORACLE')]",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"STR_ORACLESECRET": {
+							"value": "@dataset().STR_OracleSecretName",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"STR_OracleSecretName": {
+						"type": "string"
+					},
+					"STR_TABLESCHEMA": {
+						"type": "string"
+					},
+					"STR_TABLENAME": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "OracleTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().STR_TABLESCHEMA",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().STR_TABLENAME",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_ADL2_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('LS_ADL2')]",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"STR_SecretName": {
+							"value": "@dataset().STR_ADL2SecretName",
+							"type": "Expression"
+						},
+						"STR_URL": {
+							"value": "@dataset().STR_ADL2URL",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"STR_Container": {
+						"type": "string"
+					},
+					"STR_Directory": {
+						"type": "string"
+					},
+					"STR_Filename": {
+						"type": "string"
+					},
+					"STR_Compression": {
+						"type": "string"
+					},
+					"STR_ADL2SecretName": {
+						"type": "string"
+					},
+					"STR_ADL2URL": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().STR_Filename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().STR_Directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().STR_Container",
+							"type": "Expression"
+						}
+					},
+					"compressionCodec": {
+						"value": "@dataset().STR_Compression",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		}
+	]
+}

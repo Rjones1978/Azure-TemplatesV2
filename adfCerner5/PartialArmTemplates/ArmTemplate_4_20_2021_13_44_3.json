@@ -6,26 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "adfCerner5"
-		},
-		"LS_ADL2_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "@linkedService().STR_URL"
-		},
-		"LS_BLOB_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "@linkedService().STR_SECRETNAME"
-		},
-		"LS_KV_ConnectionStrings_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "@{linkedService().STR_KVURL}"
-		},
-		"LS_ORACLE_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "@linkedService().STR_ORACLESECRET"
-		},
-		"LS_SQL_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "@linkedService().STR_KVSecret"
 		}
 	},
 	"variables": {
@@ -584,7 +564,7 @@
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('LS_ADL2_properties_typeProperties_url')]",
+					"url": "@linkedService().STR_URL",
 					"accountKey": {
 						"type": "AzureKeyVaultSecret",
 						"store": {
@@ -622,7 +602,7 @@
 							"type": "LinkedServiceReference"
 						},
 						"secretName": {
-							"value": "[parameters('LS_BLOB_properties_typeProperties_connectionString_secretName')]",
+							"value": "@linkedService().STR_SECRETNAME",
 							"type": "Expression"
 						},
 						"secretVersion": ""
@@ -647,7 +627,7 @@
 				"annotations": [],
 				"type": "AzureKeyVault",
 				"typeProperties": {
-					"baseUrl": "[parameters('LS_KV_ConnectionStrings_properties_typeProperties_baseUrl')]"
+					"baseUrl": "@{linkedService().STR_KVURL}"
 				}
 			},
 			"dependsOn": []
@@ -672,7 +652,7 @@
 							"type": "LinkedServiceReference"
 						},
 						"secretName": {
-							"value": "[parameters('LS_ORACLE_properties_typeProperties_connectionString_secretName')]",
+							"value": "@linkedService().STR_ORACLESECRET",
 							"type": "Expression"
 						}
 					}
@@ -702,7 +682,7 @@
 							"type": "LinkedServiceReference"
 						},
 						"secretName": {
-							"value": "[parameters('LS_SQL_properties_typeProperties_connectionString_secretName')]",
+							"value": "@linkedService().STR_KVSecret",
 							"type": "Expression"
 						}
 					}

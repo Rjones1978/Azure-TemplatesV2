@@ -14,6 +14,9 @@
 		"LS_KV_ConnectionStrings_properties_typeProperties_baseUrl": {
 			"value": "@{linkedService().STR_KVURL}"
 		},
+		"LS_ORACLE_properties_typeProperties_connectionString_secretName": {
+			"value": "@linkedService().STR_ORACLESECRET"
+		},
 		"LS_SQL_properties_typeProperties_connectionString_secretName": {
 			"value": "@linkedService().STR_KVSecret"
 		},

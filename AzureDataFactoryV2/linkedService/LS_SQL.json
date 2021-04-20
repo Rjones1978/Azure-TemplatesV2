@@ -1,25 +1,29 @@
 {
-    "name": "LS_SQL",
-    "properties": {
-        "parameters": {
-            "STR_KVSecret": {
-                "type": "string"
-            }
-        },
-        "annotations": [],
-        "type": "SqlServer",
-        "typeProperties": {
-            "connectionString": {
-                "type": "AzureKeyVaultSecret",
-                "store": {
-                    "referenceName": "LS_KV_ConnectionStrings",
-                    "type": "LinkedServiceReference"
-                },
-                "secretName": {
-                    "value": "@linkedService().STR_KVSecret",
-                    "type": "Expression"
-                }
-            }
-        }
-    }
+	"name": "LS_SQL",
+	"properties": {
+		"parameters": {
+			"STR_KVSecret": {
+				"type": "string",
+				"defaultValue": "SEC-SQLServer1-DBX"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_KV_ConnectionStrings",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"STR_KVURL": "https://kvcerneradf2.vault.azure.net/"
+					}
+				},
+				"secretName": {
+					"value": "@linkedService().STR_KVSecret",
+					"type": "Expression"
+				}
+			}
+		}
+	}
 }

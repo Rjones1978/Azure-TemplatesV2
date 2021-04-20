@@ -9,7 +9,7 @@
 		},
 		"LS_ADL2_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "@linkedService().STR_URL"
+			"defaultValue": "@{linkedService().STR_URL}"
 		},
 		"LS_BLOB_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
@@ -575,10 +575,12 @@
 			"properties": {
 				"parameters": {
 					"STR_SecretName": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "SEC-CernerDataLake2"
 					},
 					"STR_URL": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "https://adl2cernerlake.dfs.core.windows.net/"
 					}
 				},
 				"annotations": [],
@@ -589,7 +591,10 @@
 						"type": "AzureKeyVaultSecret",
 						"store": {
 							"referenceName": "LS_KV_ConnectionStrings",
-							"type": "LinkedServiceReference"
+							"type": "LinkedServiceReference",
+							"parameters": {
+								"STR_KVURL": "https://kvcerneradf2.vault.azure.net/"
+							}
 						},
 						"secretName": {
 							"value": "@linkedService().STR_SecretName",
@@ -689,7 +694,8 @@
 			"properties": {
 				"parameters": {
 					"STR_KVSecret": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "SEC-SQLServer1-DBX"
 					}
 				},
 				"annotations": [],
@@ -699,7 +705,10 @@
 						"type": "AzureKeyVaultSecret",
 						"store": {
 							"referenceName": "LS_KV_ConnectionStrings",
-							"type": "LinkedServiceReference"
+							"type": "LinkedServiceReference",
+							"parameters": {
+								"STR_KVURL": "https://kvcerneradf2.vault.azure.net/"
+							}
 						},
 						"secretName": {
 							"value": "[parameters('LS_SQL_properties_typeProperties_connectionString_secretName')]",

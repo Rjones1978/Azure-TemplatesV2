@@ -9,7 +9,7 @@
 		},
 		"LS_ADL2_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "@linkedService().STR_URL"
+			"defaultValue": "@{linkedService().STR_URL}"
 		},
 		"LS_BLOB_properties_typeProperties_connectionString_secretName": {
 			"type": "string",

@@ -6,7 +6,7 @@
 			"value": "adfCerner5"
 		},
 		"LS_ADL2_properties_typeProperties_url": {
-			"value": "@linkedService().STR_URL"
+			"value": "@{linkedService().STR_URL}"
 		},
 		"LS_BLOB_properties_typeProperties_connectionString_secretName": {
 			"value": "@linkedService().STR_SECRETNAME"
